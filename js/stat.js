@@ -33,6 +33,11 @@ var getTopResult = function (scores) {
   return top;
 };
 
+var setFontStyle = function (ctx) {
+  ctx.fillStyle = TEXT_COLOR;
+  ctx.font = TEXT_SIZE + TEXT_FONT;
+};
+
 var renderColumn = function (ctx, player, x, y, width, height) {
   if (player === 'Вы') {
     ctx.fillStyle = PLAYER_COLOR;
@@ -43,9 +48,19 @@ var renderColumn = function (ctx, player, x, y, width, height) {
   ctx.fillRect(x, y + (GISTO_HEIGHT - height), width, height);
 };
 
-var setFontStyle = function (ctx) {
-  ctx.fillStyle = TEXT_COLOR;
-  ctx.font = TEXT_SIZE + TEXT_FONT;
+var renderShadow = function (ctx) {
+  ctx.fillStyle = SHADOW_COLOR;
+  ctx.fillRect(FIELD_X + SHADOW_SHIFT, FIELD_Y + SHADOW_SHIFT, FIELD_WIDTH, FIELD_HEIGHT);
+};
+
+var renderField = function (ctx) {
+  ctx.fillStyle = FIELD_COLOR;
+  ctx.fillRect(FIELD_X, FIELD_Y, FIELD_WIDTH, FIELD_HEIGHT);
+};
+
+var renderMessage = function (ctx) {
+  ctx.fillText(CONGRATS[0], TEXT_X, TEXT_Y);
+  ctx.fillText(CONGRATS[1], TEXT_X, TEXT_Y + LINE_GAP);
 };
 
 var renderGisto = function (ctx, players, results, x, y, width, gap) {
@@ -55,24 +70,17 @@ var renderGisto = function (ctx, players, results, x, y, width, gap) {
     var columnHeight = Math.round(results[i] / topResult * GISTO_HEIGHT);
     renderColumn(ctx, players[i], columnX, y, width, columnHeight);
     setFontStyle(ctx);
-    // имена игроков
+    // имя игрока
     ctx.fillText(players[i], columnX, y + GISTO_HEIGHT + LINE_GAP);
-    // результаты игроков
+    // результат игрока
     ctx.fillText(Math.round(results[i]), columnX, y + (GISTO_HEIGHT - columnHeight) - 5);
   }
 };
 
 window.renderStatistics = function (ctx, names, times) {
-  // тень
-  ctx.fillStyle = SHADOW_COLOR;
-  ctx.fillRect(FIELD_X + SHADOW_SHIFT, FIELD_Y + SHADOW_SHIFT, FIELD_WIDTH, FIELD_HEIGHT);
-  // облако
-  ctx.fillStyle = FIELD_COLOR;
-  ctx.fillRect(FIELD_X, FIELD_Y, FIELD_WIDTH, FIELD_HEIGHT);
-  // сообщение
+  renderShadow(ctx);
+  renderField(ctx);
   setFontStyle(ctx);
-  ctx.fillText(CONGRATS[0], TEXT_X, TEXT_Y);
-  ctx.fillText(CONGRATS[1], TEXT_X, TEXT_Y + LINE_GAP);
-  // гистограмма
+  renderMessage(ctx);
   renderGisto(ctx, names, times, TEXT_X, TEXT_Y + LINE_GAP * 2, COLUMN_WIDTH, COLUMN_GAP);
 };
