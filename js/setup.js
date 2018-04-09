@@ -70,7 +70,7 @@ var setWizardEyes = function (element, wizard) {
   element.querySelector('.wizard-eyes').style.fill = wizard.eyesColor;
 };
 
-var wizardElement = function (wizard) {
+var makeWizardElement = function (wizard) {
   var element = similarWizardTemplate.cloneNode(true);
   setWizardName(element, wizard);
   setWizardCoat(element, wizard);
@@ -80,7 +80,7 @@ var wizardElement = function (wizard) {
 
 var appendElements = function (elements) {
   for (var i = 0; i < elements.length; i++) {
-    similarWizardElement.appendChild(wizardElement(elements[i]));
+    similarWizardElement.appendChild(makeWizardElement(elements[i]));
   }
 };
 
