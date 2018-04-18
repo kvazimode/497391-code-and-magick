@@ -20,7 +20,7 @@ var SURNAMES = [
   'Нионго',
   'Ирвинг'
 ];
-var COLORS = [
+var COAT_COLORS = [
   'rgb(101, 137, 164)',
   'rgb(241, 43, 107)',
   'rgb(146, 100, 161)',
@@ -28,14 +28,16 @@ var COLORS = [
   'rgb(215, 210, 55)',
   'rgb(0, 0, 0)'
 ];
-var EYES = ['black', 'red', 'blue', 'yellow', 'green'];
-
-// показываем поле настроек
-document.querySelector('.setup').classList.remove('hidden');
-document.querySelector('.setup-similar').classList.remove('hidden');
-
-var similarWizardTemplate = document.querySelector('#similar-wizard-template').content;
-var similarWizardElement = document.querySelector('.setup-similar-list');
+var FIREBALL_COLORS = [
+  '#ee4830',
+  '#30a8ee',
+  '#5ce6c0',
+  '#e848d5',
+  '#e6e848'
+];
+var EYE_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
+var ESC_CODE = 27;
+var ENTER_CODE = 13;
 
 var getRandomInt = function (min, max) {
   var random = min - 0.5 + Math.random() * (max - min + 1);
@@ -48,13 +50,81 @@ var getRandomParam = function (params) {
   return param;
 };
 
+// поведение окна настроек
+var setupCloud = document.querySelector('.setup');
+var setupOpenButton = document.querySelector('.setup-open');
+var setupCloseButton = setupCloud.querySelector('.setup-close');
+var userNameField = setupCloud.querySelector('.setup-user-name');
+var wizardSetup = setupCloud.querySelector('.setup-wizard');
+var wizardEyes = wizardSetup.querySelector('.wizard-eyes');
+var wizardEyesColor = setupCloud.querySelector('input[name=eyes-color]');
+var wizardFireball = setupCloud.querySelector('.setup-fireball');
+var wizardFireballColor = setupCloud.querySelector('input[name=fireball-color]');
+
+var setupEscPressHandler = function (evt) {
+  if (evt.keyCode === ESC_CODE && !(document.activeElement === userNameField)) {
+    closeSetupCloud();
+  }
+};
+
+var openSetupCloud = function () {
+  setupCloud.classList.remove('hidden');
+  document.addEventListener('keydown', setupEscPressHandler);
+  wizardEyes.addEventListener('click', setEyesColor);
+  wizardFireball.addEventListener('click', setFireballColor);
+};
+
+var closeSetupCloud = function () {
+  setupCloud.classList.add('hidden');
+  document.removeEventListener('keydown', setupEscPressHandler);
+  wizardEyes.removeEventListener('click', setEyesColor);
+  wizardFireball.removeEventListener('click', setFireballColor);
+};
+
+setupOpenButton.addEventListener('click', function () {
+  openSetupCloud();
+});
+
+setupOpenButton.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_CODE) {
+    openSetupCloud();
+  }
+});
+
+setupCloseButton.addEventListener('click', function () {
+  closeSetupCloud();
+});
+
+setupCloseButton.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_CODE) {
+    closeSetupCloud();
+  }
+});
+
+var setEyesColor = function () {
+  var color = getRandomParam(EYE_COLORS);
+  wizardEyesColor.value = color;
+  wizardEyes.style.fill = color;
+};
+
+var setFireballColor = function () {
+  var color = getRandomParam(FIREBALL_COLORS);
+  wizardFireballColor.value = color;
+  wizardFireball.style.backgroundColor = color;
+};
+
+// отображение похожих волшебников в окне настроек
+document.querySelector('.setup-similar').classList.remove('hidden');
+var similarWizardTemplate = document.querySelector('#similar-wizard-template').content;
+var similarWizardElement = document.querySelector('.setup-similar-list');
+
 var generateWizards = function (amount) {
   var wizards = [];
   for (var i = 0; i < amount; i++) {
     var wizard = {};
     wizard.name = getRandomParam(NAMES) + ' ' + getRandomParam(SURNAMES);
-    wizard.coatColor = getRandomParam(COLORS);
-    wizard.eyesColor = getRandomParam(EYES);
+    wizard.coatColor = getRandomParam(COAT_COLORS);
+    wizard.eyesColor = getRandomParam(EYE_COLORS);
     wizards.push(wizard);
   }
   return wizards;
