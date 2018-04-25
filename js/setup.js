@@ -38,6 +38,8 @@ var FIREBALL_COLORS = [
 var EYE_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
 var ESC_CODE = 27;
 var ENTER_CODE = 13;
+var DROP_ZONE_BORDER_STYLE = 'outline: 2px dashed red';
+var HOVERED_CELL_STYLE = 'background-color: yellow';
 
 var getRandomInt = function (min, max) {
   var random = min - 0.5 + Math.random() * (max - min + 1);
@@ -60,7 +62,58 @@ var wizardEyes = wizardSetup.querySelector('.wizard-eyes');
 var wizardEyesColor = setupCloud.querySelector('input[name=eyes-color]');
 var wizardFireball = setupCloud.querySelector('.setup-fireball');
 var wizardFireballColor = setupCloud.querySelector('input[name=fireball-color]');
+var artifactShop = setupCloud.querySelector('.setup-artifacts-shop');
+var artifactBag = setupCloud.querySelector('.setup-artifacts');
+var dragged = null;
 
+// Перемещение артефактов
+var clearDropZoneBorder = function () {
+  artifactBag.removeAttribute('style', 'style');
+};
+
+artifactShop.addEventListener('dragstart', function (evt) {
+  if (evt.target.tagName === 'IMG') {
+    dragged = evt.target.cloneNode(false);
+    artifactBag.style = DROP_ZONE_BORDER_STYLE;
+  }
+});
+
+artifactBag.addEventListener('dragstart', function (evt) {
+  if (evt.target.tagName === 'IMG') {
+    dragged = evt.target;
+    artifactBag.style = DROP_ZONE_BORDER_STYLE;
+  }
+});
+
+artifactShop.addEventListener('dragend', clearDropZoneBorder);
+artifactBag.addEventListener('dragend', clearDropZoneBorder);
+
+artifactBag.addEventListener('drop', function (evt) {
+  evt.target.removeAttribute('style', 'style');
+  if (evt.target.tagName === 'DIV' && !evt.target.hasChildNodes()) {
+    evt.target.appendChild(dragged);
+  }
+  evt.preventDefault();
+});
+
+artifactBag.addEventListener('dragover', function (evt) {
+  evt.preventDefault();
+  return false;
+});
+
+artifactBag.addEventListener('dragenter', function (evt) {
+  if (evt.target.tagName === 'DIV' && !evt.target.hasChildNodes()) {
+    evt.target.style = HOVERED_CELL_STYLE;
+  }
+  evt.preventDefault();
+});
+
+artifactBag.addEventListener('dragleave', function (evt) {
+  evt.target.removeAttribute('style', 'style');
+  evt.preventDefault();
+});
+
+// Открытие и закрытие окна
 var setupEscPressHandler = function (evt) {
   if (evt.keyCode === ESC_CODE && !(document.activeElement === userNameField)) {
     closeSetupCloud();
@@ -79,6 +132,7 @@ var closeSetupCloud = function () {
   document.removeEventListener('keydown', setupEscPressHandler);
   wizardEyes.removeEventListener('click', setEyesColor);
   wizardFireball.removeEventListener('click', setFireballColor);
+  setupCloud.removeAttribute('style', 'style');
 };
 
 setupOpenButton.addEventListener('click', function () {
