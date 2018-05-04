@@ -1,5 +1,6 @@
 'use strict';
 
+// перетаскивание окна настроек
 (function () {
   var userPic = window.util.setupDialog.querySelector('.setup-user-pic').nextElementSibling;
   var dragged = false;
